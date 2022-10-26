@@ -60,8 +60,8 @@ namespace GrupoWebBackend
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             services.AddDbContext<AppDbContext>(options =>
             {
-                options.UseMySQL("server=localhost; user=timexp; database=timarq_service_publications; password=XempreDB; port=3306");
-                //options.UseInMemoryDatabase("GrupoWebBackend-api-in-memory");
+                //options.UseMySQL("server=localhost; user=timexp; database=timarq_service_publications; password=XempreDB; port=3306");
+                options.UseInMemoryDatabase("GrupoWebBackend-api-in-memory");
             });
             services.AddSwaggerGen(c =>
             {
@@ -111,8 +111,6 @@ namespace GrupoWebBackend
             app.UseMiddleware<ErrorHandlerMiddleware>();
 
             app.UseMiddleware<JwtMiddleware>();
-
-            //app.UseHttpsRedirection();
 
             app.UseRouting();
 
