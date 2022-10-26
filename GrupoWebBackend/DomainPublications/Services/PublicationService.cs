@@ -15,7 +15,6 @@ namespace GrupoWebBackend.DomainPublications.Services
     public class PublicationService:IPublicationService
     {
         private readonly IPublicationRepository _publicationRepository;
-        //private readonly IUserRepository _userRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IUserRepository _userRepository;
 
@@ -46,12 +45,11 @@ namespace GrupoWebBackend.DomainPublications.Services
                 return new SavePublicationResponse(false,"This pet is already published.", publication);
             
             var existingUser = await _userRepository.FindByIdAsync(publication.UserId);
-          
             if (existingUser == null)
                 return new SavePublicationResponse(false, "This user does not exist", publication);
             
             if(existingUser.Subscription == null)
-                return new SavePublicationResponse(false, "This user not have a subscription.", publication);
+                return new SavePublicationResponse(false, "This user not have a valid subscription.", publication);
             
             try
             {
@@ -68,7 +66,6 @@ namespace GrupoWebBackend.DomainPublications.Services
         public async Task<Publication> FindByIdAsync(int id)
         {
             return await _publicationRepository.FindByIdAsync(id);
-            
         }
 
         public async Task<PublicationResponse> UpdateAsync(int id, Publication publication)
@@ -77,6 +74,7 @@ namespace GrupoWebBackend.DomainPublications.Services
 
             if (existingPublication == null)
                 return new PublicationResponse("Publication not Found");
+
             existingPublication.Comment = publication.Comment;
             existingPublication.DateTime = publication.DateTime;
             existingPublication.PetId = publication.PetId;
@@ -97,10 +95,11 @@ namespace GrupoWebBackend.DomainPublications.Services
 
         public async Task<PublicationResponse> DeleteAsync(int id)
         {
-
             var existingPublication = await _publicationRepository.FindByIdAsync(id);
+
             if (existingPublication == null)
                 return new PublicationResponse("Pet not found.");
+
             try
             {
                 _publicationRepository.Remove(existingPublication);
